@@ -42,27 +42,18 @@ var sum = function(array) {
     return arraySum;
 };
 
-// 3. Sum all numbers in an array containing nested arrays.
-// arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
 
-    if (array.length === 0) {
-        return 0;
+    let sum = 0;
+    for (let i = 0; i < array.length; i++) {
+      const current = array[i];
+      if (Array.isArray(current)) {
+        sum += arraySum(current);
+      } else if (typeof current === "number") {
+        sum += current;
+      }
     }
-
-    var tempSum = 0;
-
-    if (Array.isArray(array[0])) {
-        return arraySum(array[0]);
-    }
-
-    tempSum += array[0];
-
-    if (array.slice(1).length === 0) {
-        return tempSum;
-    }
-
-    return tempSum + arraySum(array.slice(1));
+    return sum;  
 
 };
 
@@ -112,28 +103,58 @@ var range = function(x, y) {
     }
 };
 
-// 7. Compute the exponent of a number.
-// The exponent of a number says how many times the base number is used as a factor.
-// 8^2 = 8 x 8 = 64. Here, 8 is the base and 2 is the exponent.
-// exponent(4,3); // 64
-// https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
-    
+    if (exp == 0) {
+        return 1;
+    }
+    else if (exp > 0) {
+        return base * exponent(base, exp - 1);
+    } else {
+        return 1 / exponent(base, -exp);
+    }
 };
 
-// 8. Determine if a number is a power of two.
-// powerOfTwo(1); // true
-// powerOfTwo(16); // true
-// powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+    if (n === 1) {
+        return true;
+    } else if (n > 0 && n < 1) {
+        return false;
+    } else if (n === 0) {
+        return false;
+    }
+    return powerOfTwo(n / 2) === true;
 };
 
-// 9. Write a function that reverses a string.
 var reverse = function(string) {
+    var stringLength = string.length;
+
+    if (stringLength === 1) {
+        return string[0];
+    }
+
+    return string[stringLength - 1] + reverse(string.slice(0, -1));
 };
 
-// 10. Write a function that determines if a string is a palindrome.
 var palindrome = function(string) {
+
+    var stringLength = string.length;
+
+    if (stringLength === 0) {
+        return true;
+    }
+
+    var firstChar = string[0].toLowerCase();
+    var lastChar = string[stringLength - 1].toLowerCase();
+
+    if (firstChar === ' ' && lastChar === ' ') {
+        return palindrome(string.slice(1, -1));
+    }
+
+    if (firstChar !== lastChar) {
+        return false;
+    }
+
+    return palindrome(string.slice(1, -1));
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -210,16 +231,29 @@ var rMap = function(array, callback) {
 var countKeysInObj = function(obj, key) {
 };
 
-// 23. Write a function that counts the number of times a value occurs in an object.
-// var obj = {'e':{'x':'y'},'t':{'r':{'e':'r'},'p':{'y':'r'}},'y':'e'};
-// countValuesInObj(obj, 'r') // 2
-// countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+    var count = 0;
+    for (var key in obj) {
+      if (typeof obj[key] === 'object') {
+        count += countValuesInObj(obj[key], value);
+      } else if (obj[key] === value) {
+        count++;
+      }
+    }
+    return count;
 };
 
-// 24. Find all keys in an object (and nested objects) by a provided name and rename
-// them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, oldKey, newKey) {
+    for (var key in obj) {
+        if (typeof obj[key] === 'object') {
+            replaceKeysInObj(obj[key], oldKey, newKey);
+        }
+        if (key === oldKey) {
+            obj[newKey] = obj[oldKey];
+            delete obj[oldKey];
+        }
+    }
+    return obj;
 };
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
